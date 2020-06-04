@@ -3,6 +3,8 @@ from discord.ext import commands, tasks
 import configparser
 import random,re
 from cogs.Moderation import Moderation
+from cogs.music import Music
+
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -23,6 +25,7 @@ bot = commands.AutoShardedBot(command_prefix="?",
 owner = [177375818635280384, 177394669766836224]
 
 bot.add_cog(Moderation(bot))
+bot.add_cog(Music(bot))
 
 @bot.event
 async def on_ready():
@@ -65,6 +68,21 @@ async def shutdown(ctx):
     if not ctx.message.author.id in owner:
         return
     await bot.close()
+
+def generate_doc(bot):
+    all_command = {}
+    for obj in bot.commands:  # On trie les commandes par cog
+        if obj.cog_name is not None and obj.hidden is False:
+            if obj.cog_name in all_command:
+                all_command[obj.cog_name].append(obj)
+            else:
+                all_command[obj.cog_name] = [obj]
+
+    for cat, cont in all_command.items():  # On enleve les doublons
+        all_command[cat] = list(set(cont))
+
+    all_command = dict(sorted(all_command.items(), key=lambda t: t[0]))  # On trie par ordre alphabetique
+    return all_command
 
 COMMAND_LIST = generate_doc(bot)
 

@@ -11,6 +11,7 @@ import traceback
 import wavelink
 from discord.ext import commands
 from typing import Union
+from collections import deque
 
 RURL = re.compile('https?:\/\/(?:www\.)?.+')
 
@@ -23,7 +24,7 @@ class MusicController:
         self.channel = None
 
         self.next = asyncio.Event()
-        self.queue = asyncio.Queue()
+        self.queue = deque()
 
         self.volume = 40
         self.now_playing = None
@@ -45,12 +46,18 @@ class MusicController:
 
             self.next.clear()
 
-            song = await self.queue.get()
+            song = None
+            while not song:
+                try:
+                    song = self.queue.popleft()
+                except IndexError:
+                    await asyncio.sleep(0.5)
+
             await player.play(song)
             try:
                 track = song
                 embed = Music.embed_constructor()
-                embed.add_field(name='Musique jouer :' , value=track.title)
+                embed.add_field(name='Musique en cour :' , value=track.title)
                 embed.add_field(name='Autheur : ' , value=track.author)
                 embed.add_field(name='Duree : ' ,
                                 value='{0}m{1}s'.format(int(track.duration) // 60000 , int(track.duration / 1000) % 60))
@@ -183,6 +190,31 @@ class Music(commands.Cog):
         controller = self.get_controller(ctx)
         controller.channel = ctx.channel
 
+
+
+    @commands.command(aliases=['sb' , 'sound'])
+    async def soundbox(self , ctx , * , query: str = None):
+        """Soundbox"""
+        print('Hey')
+        if not query.startswith('soundbox/'):
+            query = 'soundbox/'+query
+
+        if not query.endswith('.opus'):
+            query+='.opus'
+
+        player = self.bot.wavelink.get_player(ctx.guild.id)
+        if not player.is_connected:
+            await ctx.invoke(self.connect_)
+        tracks = await self.bot.wavelink.get_tracks(f'{query}')
+        controller = self.get_controller(ctx)
+        controller.queue.appendleft(tracks[0])
+        if player.is_playing:
+            await player.stop()
+
+
+
+
+
     @commands.command(aliases=['p' , 'song'])
     async def play(self , ctx , * , query: str = None):
         """Search for and add a song to the Queue."""
@@ -212,17 +244,17 @@ class Music(commands.Cog):
         if type(tracks) == wavelink.player.TrackPlaylist:
             for i in tracks.tracks:
                 controller = self.get_controller(ctx)
-                await controller.queue.put(i)
+                await controller.queue.append(i)
             await ctx.send('Playlist ajouter!')
             return
 
         track = tracks[0]
 
         controller = self.get_controller(ctx)
-        await controller.queue.put(track)
+        controller.queue.append(track)
 
         embed = self.embed_constructor()
-        embed.add_field(name='Titre :' , value=track.title)
+        embed.add_field(name='Musique ajouter :' , value=track.title)
         embed.add_field(name='Autheur : ' , value=track.author)
         embed.add_field(name='Duree : ' ,
                         value='{0}m{1}s'.format(int(track.duration) // 60000 , int(track.duration / 1000) % 60))
@@ -355,10 +387,10 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id)
         controller = self.get_controller(ctx)
 
-        if not player.current or not controller.queue._queue:
+        if not player.current or not len(controller.queue):
             return await ctx.send('ya rien dans la queue.' , delete_after=20)
 
-        upcoming = list(itertools.islice(controller.queue._queue , 0 , 10))
+        upcoming = list(itertools.islice(controller.queue , 0 , 10))
 
         fmt = '\n'.join(f'**`{str(song)}`**' for song in upcoming)
         embed = discord.Embed(title=f'Prochaine musiques - {len(upcoming)}' , description=fmt ,

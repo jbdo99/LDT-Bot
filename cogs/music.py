@@ -12,6 +12,7 @@ import wavelink
 from discord.ext import commands
 from typing import Union
 from collections import deque
+import os
 
 RURL = re.compile('https?:\/\/(?:www\.)?.+')
 
@@ -196,16 +197,30 @@ class Music(commands.Cog):
     async def soundbox(self , ctx , * , query: str = None):
         """Soundbox"""
         print('Hey')
+        box = os.listdir('music/soundbox')
+        list_box = [i.replace('.mp3','') for i in box if i.endswith('mp3')]
+        
+        if not query:
+            embed = discord.Embed(color=discord.Colour.dark_red())
+            cmd2 = '`' + ("`, `".join(sorted(list_box))) + '`'
+            embed.add_field(name='SoundBox :' , value=cmd2 , inline=True)
+            await ctx.send(embed=embed)
+            return
+
+
         if not query.startswith('soundbox/'):
             query = 'soundbox/'+query
 
-        if not query.endswith('.opus'):
-            query+='.opus'
+        if not query.endswith('.mp3') and not query.endswith('.opus'):
+            query += '.mp3'
 
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.is_connected:
             await ctx.invoke(self.connect_)
         tracks = await self.bot.wavelink.get_tracks(f'{query}')
+        if not tracks:
+            await ctx.send(f'Impossible de trouver : {query}')
+            return
         controller = self.get_controller(ctx)
         controller.queue.appendleft(tracks[0])
         if player.is_playing:

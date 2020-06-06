@@ -352,7 +352,7 @@ class Music(commands.Cog):
 
         await player.set_eq(wavelink.Equalizer(
             ([(0 , .0 * boost) , (1 , .125 * boost) , (2 , .125 * boost) , (3 , .1 * boost) , (4 , .1 * boost) ,
-              (5 , .02 * boost) , (6 , 0.025 * boost) , (7 , .0) , (8 , .0) , (9 , .0) ,
+              (5 , .012 * boost) , (6 , 0.015 * boost) , (7 , .0) , (8 , .0) , (9 , .0) ,
               (10 , .0) , (11 , .0) , (12 , .125) , (13 , .15) , (14 , .05)])))
 
         await ctx.send(f'Bass Booster! x{str(boost)}')
@@ -398,6 +398,7 @@ class Music(commands.Cog):
 
         await ctx.send(embed=embed)
 
+
     @commands.command(aliases=['disconnect' , 'dc' , 'leave'])
     async def stop(self , ctx):
         """Stop and disconnect the player and controller."""
@@ -415,7 +416,7 @@ class Music(commands.Cog):
             except:
                 pass
             await player.disconnect()
-            return await ctx.send('OK.')
+            return await ctx.send('Ok, next')
 
         await player.stop()
         await player.disconnect()

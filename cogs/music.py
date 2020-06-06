@@ -92,7 +92,7 @@ class Music(commands.Cog):
             node = await self.bot.wavelink.initiate_node(host='127.0.0.1' ,
                                                          port=2333 ,
                                                          rest_uri='http://127.0.0.1:2333' ,
-                                                         password='DfTGDIojI9830jjIJJ738DYJJI537515D51D' ,
+                                                         password="PsDtYiKnhS920ksIiytf" ,
                                                          identifier='LavaPlayer' ,
                                                          region='europe')
         except Exception as e:
@@ -244,7 +244,7 @@ class Music(commands.Cog):
         if type(tracks) == wavelink.player.TrackPlaylist:
             for i in tracks.tracks:
                 controller = self.get_controller(ctx)
-                await controller.queue.append(i)
+                controller.queue.append(i)
             await ctx.send('Playlist ajouter!')
             return
 
@@ -390,10 +390,10 @@ class Music(commands.Cog):
         if not player.current or not len(controller.queue):
             return await ctx.send('ya rien dans la queue.' , delete_after=20)
 
-        upcoming = list(itertools.islice(controller.queue , 0 , 10))
+        upcoming = list(itertools.islice(controller.queue , 0 , 15))
 
         fmt = '\n'.join(f'**`{str(song)}`**' for song in upcoming)
-        embed = discord.Embed(title=f'Prochaine musiques - {len(upcoming)}' , description=fmt ,
+        embed = discord.Embed(title=f'{len(upcoming)} Prochaines musiques' , description=fmt ,
                               color=discord.Colour.dark_red())
 
         await ctx.send(embed=embed)

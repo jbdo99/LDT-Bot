@@ -92,7 +92,7 @@ class Music(commands.Cog):
             node = await self.bot.wavelink.initiate_node(host='127.0.0.1' ,
                                                          port=2333 ,
                                                          rest_uri='http://127.0.0.1:2333' ,
-                                                         password='PsDtYiKnhS920ksIiytf' ,
+                                                         password='DfTGDIojI9830jjIJJ738DYJJI537515D51D' ,
                                                          identifier='LavaPlayer' ,
                                                          region='europe')
         except Exception as e:

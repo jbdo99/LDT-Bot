@@ -22,7 +22,7 @@ bot = commands.AutoShardedBot(command_prefix="?",
                               allowed_mentions=discord.AllowedMentions(everyone=False)
                               )
 
-owner = [177375818635280384, 177394669766836224]
+owner = [177375818635280384, 177394669766836224, 685540778474209327]
 
 bot.add_cog(Moderation(bot))
 bot.add_cog(Music(bot))

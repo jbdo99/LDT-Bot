@@ -94,35 +94,36 @@ async def help(ctx, *args):
     for i in bot.commands:
         com[i.name] = i
     suppot = discord.Embed()
-    suppot.colour = random.randint(0, 0xFFFFFF)
+    suppot.colour = discord.Colour.dark_red()
     if len(args) < 1:
-        suppot.set_author(name="Title", url="https://discord.gg/24f6aWF",
-                          icon_url="https://sheepbot.net/static/css/rS.png")
-        suppot.add_field(name="Un message supplémentaire",
-                         value="[Website](http://sheepbot.net/)\n[Discord Server](https://discord.gg/24f6aWF)\n",
-                         inline=False)
+        suppot.set_author(
+            name='Ligue Des Trolleurs™',
+            icon_url="https://cdn.discordapp.com/icons/464745857217200128/a_168e8604add366fc621c4ebec8cbabe5.gif?size=1024"
+        )
         for categorie, content in COMMAND_LIST.items():
             text = ""
             for commande in content:
                 text += "`{0}`, ".format(commande.name)
             text = text[0:len(text) - 2]
             suppot.add_field(name="*{0}* : ".format(categorie), value=text, inline=False)
-        suppot.add_field(name="Bottom line",
-                         value="[link](https://www.patreon.com/SheepBot)", inline=False)
     else:
         search = args[0]
         if search in com.keys():
-            suppot.set_author(name="I've found it !", url="http://discord.gg/KbXqEVe",
-                              icon_url="https://sheepbot.net/static/css/rS.png")
+            suppot.set_author(
+                name='Ligue Des Trolleurs™',
+                icon_url="https://cdn.discordapp.com/icons/464745857217200128/a_168e8604add366fc621c4ebec8cbabe5.gif?size=1024"
+            )
             helpo = com[search].help
             if helpo == None or helpo == "None":
-                helpo = "No description found"
+                helpo = "Pas de description"
             suppot.add_field(name="{0}".format(search), value="{0}".format(helpo))
         else:
-            suppot.set_author(name="Sorry !", url="https://discord.gg/24f6aWF",
-                              icon_url="https://sheepbot.net/static/css/rS.png")
-            suppot.add_field(name="There is no command named `{0}` !".format(search),
-                             value="Check the list of command with !!help or visite the [full documentation](http://sheepbot.net/doc/)")
+            suppot.set_author(
+                name='Ligue Des Trolleurs™',
+                icon_url="https://cdn.discordapp.com/icons/464745857217200128/a_168e8604add366fc621c4ebec8cbabe5.gif?size=1024"
+            )
+            suppot.add_field(name="Il n y a pas de commandes qui se nomme `{0}` !".format(search),
+                             value="Liste de toutes les commandes : ?help")
     await ctx.send(embed=suppot)
 
 

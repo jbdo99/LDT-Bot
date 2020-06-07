@@ -36,7 +36,7 @@ class Moderation(commands.Cog):
 
     @tasks.loop(minutes=1.0)
     async def mute_reload(self):
-        print("checker")
+        print("Mute reload now")
         loop = asyncio.get_event_loop()
         now = datetime.datetime.now()
         res = await loop.run_in_executor(None, self.db.mod.find, {'type': 'mute', 'date': {'$gte': now-datetime.timedelta(days=1)}})
@@ -47,11 +47,6 @@ class Moderation(commands.Cog):
                     await member.remove_roles(self.bot.mute_role)
                 except Exception as e:
                     pass
-
-
-
-
-
 
     @commands.command()
     async def ban(self, ctx, members: commands.Greedy[discord.Member], delete_days: typing.Optional[int] = 0, *,
@@ -125,8 +120,8 @@ class Moderation(commands.Cog):
                    reason: str = 'Pas de raisons'):
         """
         Commande de mute.
-        Utilisation : `?mute @membre nb_minute raison`
-        De plus on peut mute plusieur personnes d'un coup : `?mute @membre1 @membre2 @membre3 nb_minute raison`
+        Utilisation : `?mute @membre nb_heure raison`
+        De plus on peut mute plusieur personnes d'un coup : `?mute @membre1 @membre2 @membre3 nb_heuree raison`
         """
         date = datetime.datetime.now()
         for member in members:
@@ -135,7 +130,7 @@ class Moderation(commands.Cog):
             embed.title = "Log Modération : Mute"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
-            embed.add_field(name="Durée (en minutes) :", value=duration)
+            embed.add_field(name="Durée (en heures) :", value=duration)
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)

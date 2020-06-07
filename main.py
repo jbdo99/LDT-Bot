@@ -11,6 +11,7 @@ config.read('config.ini')
 TOKEN = config['MAIN']['token']
 PROD = eval(config['MAIN']['prod'])
 MDB_USER, MDB_PASSWD = config['MDB']['user'], config['MDB']['passwd']
+LAVALINK_PASSwORD = config['LAVALINK']['password']
 
 
 description = '''LDT BOT, an awesome bot'''
@@ -25,7 +26,7 @@ bot = commands.AutoShardedBot(command_prefix="?",
 owner = [177375818635280384, 177394669766836224, 685540778474209327]
 
 bot.add_cog(Moderation(bot))
-bot.add_cog(Music(bot))
+bot.add_cog(Music(bot, LAVALINK_PASSwORD))
 
 @bot.event
 async def on_ready():

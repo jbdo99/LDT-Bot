@@ -73,8 +73,9 @@ class MusicController:
 
 class Music(commands.Cog):
 
-    def __init__(self , bot):
+    def __init__(self , bot, lavalink_password):
         self.bot = bot
+        self.lavalink_password = lavalink_password
         self.controllers = {}
         self.autoP = {}
         self.playtime = {}
@@ -93,7 +94,7 @@ class Music(commands.Cog):
             node = await self.bot.wavelink.initiate_node(host='127.0.0.1' ,
                                                          port=2333 ,
                                                          rest_uri='http://127.0.0.1:2333' ,
-                                                         password="PsDtYiKnhS920ksIiytf" ,
+                                                         password=self.lavalink_password,
                                                          identifier='LavaPlayer' ,
                                                          region='europe')
         except Exception as e:

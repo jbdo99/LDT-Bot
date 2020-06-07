@@ -13,8 +13,12 @@ from discord.ext import commands
 from typing import Union
 from collections import deque
 import os
+import json
 
 RURL = re.compile('https?:\/\/(?:www\.)?.+')
+
+with open(os.path.dirname(__file__)[:-4] + 'server.json') as f:
+    permissions_config = json.load(f)
 
 
 class MusicController:

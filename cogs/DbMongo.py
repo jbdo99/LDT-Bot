@@ -1,6 +1,10 @@
 from pymongo import MongoClient
 import asyncio
+import os
+import json
 
+with open(os.path.dirname(__file__)[:-4] + 'server.json') as f:
+    permissions_config = json.load(f)
 
 class DbMongo:
     def __init__(self, host, username, password):

@@ -1,18 +1,27 @@
 {
-  "server_id": 1000,
+  "server_id": 718529624170299523,
   "mod" : {
-    "mute_role" : 0,
-    "mute_perms" : 0,
-    "warn_perms" : 0,
-    "kick_perms" : 0,
-    "ban_perms" : 0
+    "mute_role" : 719177700807409725,
+    "mute_perms" : 719299208913616990,
+    "warn_perms" : 719299208913616990,
+    "management_perms": 719299208913616990
   },
   "bl": {
-    "blhsf_role": 0,
-    "blhsf_perms": 0,
-    "bltds_role": 0,
-    "bltds_perms": 0,
-    "bld_role": 0,
-    "bld_perms": 0,
+    "blhsf_role": 719299241297576029,
+    "blhsf_perms": 719299208913616990,
+    "bltds_role": 719299241297576029,
+    "bltds_perms": 719299208913616990,
+    "bld_role": 719299241297576029,
+    "bld_perms": 719299208913616990
+  },
+  "music": {
+    "music_perms": 719299208913616990,
+    "effect_perms": 719299208913616990,
+    "soundboard_perms": 719299208913616990
+  },
+  "divers": {
+    "image_perms": 719299208913616990,
+    "confession_chan_1": 719303572860174408,
+    "confession_chan_2": 719303597250183540
   }
 }

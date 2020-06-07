@@ -5,6 +5,9 @@ import random,re
 from cogs.Moderation import Moderation
 from cogs.music import Music
 from cogs.DbMongo import DbMongo
+import os
+import json
+import asyncio
 
 
 config = configparser.ConfigParser()
@@ -34,6 +37,10 @@ if PROD:
 else:
     bot.db = DbMongo(host="sheepbot.net", username=MDB_USER, password=MDB_PASSWD)
 
+with open('server.json') as f:
+    permissions_config = json.load(f)
+    bot.config = permissions_config
+
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -42,11 +49,16 @@ async def on_ready():
     print('------')
     activity = discord.Activity(name="LDT Bot", type=discord.ActivityType.playing)
     await bot.change_presence(activity=activity)
-    # INIT Role
-    bot.ldt_server = discord.utils.get(bot.guilds, id=718529624170299523)
-    bot.mute_role = bot.ldt_server.get_role(719177700807409725)
+    bot.ldt_server = discord.utils.get(bot.guilds, id=permissions_config['server_id'])
 
-
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+        await ctx.send("Vous n'avez pas la permission d'exécuter cette commande")
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send("Vous n'avez pas la permission d'exécuter cette commande")
+    else:
+        print("une erreur c'est produite ici : ",error)
 
 @bot.command()
 async def ping(ctx):
@@ -136,7 +148,35 @@ async def help(ctx, *args):
                              value="Liste de toutes les commandes : ?help")
     await ctx.send(embed=suppot)
 
+#TASKS
 
+async def mute_task():
+    while not bot.is_closed():
+        try:
+            modcog = bot.get_cog("Moderation")
+            await modcog.mute_reload()
+            await asyncio.sleep(60)
+        except Exception as e:
+            print("Warning error in mute tasks")
+            print(e)
+            await asyncio.sleep(120)
 
+async def ban_task():
+    while not bot.is_closed():
+        try:
+            modcog = bot.get_cog("Moderation")
+            await modcog.ban_reload()
+            await asyncio.sleep(3600)
+        except Exception as e:
+            print("Warning error in ban tasks")
+            await asyncio.sleep(3600)
+
+try:
+    bot.loop.create_task(mute_task())
+    bot.loop.create_task(ban_task())
+
+except Exception as e:
+    print(e)
+    print('Task error')
 
 bot.run(TOKEN)

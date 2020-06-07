@@ -4,6 +4,7 @@ import configparser
 import random,re
 from cogs.Moderation import Moderation
 from cogs.music import Music
+from cogs.DbMongo import DbMongo
 
 
 config = configparser.ConfigParser()
@@ -28,6 +29,11 @@ owner = [177375818635280384, 177394669766836224, 685540778474209327]
 bot.add_cog(Moderation(bot))
 bot.add_cog(Music(bot, LAVALINK_PASSwORD))
 
+if PROD:
+    bot.db = DbMongo(host="localhost", username=MDB_USER, password=MDB_PASSWD)
+else:
+    bot.db = DbMongo(host="sheepbot.net", username=MDB_USER, password=MDB_PASSWD)
+
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -36,6 +42,9 @@ async def on_ready():
     print('------')
     activity = discord.Activity(name="LDT Bot", type=discord.ActivityType.playing)
     await bot.change_presence(activity=activity)
+    # INIT Role
+    bot.ldt_server = discord.utils.get(bot.guilds, id=718529624170299523)
+    bot.mute_role = bot.ldt_server.get_role(719177700807409725)
 
 
 
@@ -55,7 +64,7 @@ async def _eval(ctx, ev: str):
     if not ctx.message.author.id in owner:
         return
     try:
-        a = eval(ctx.message.content.replace('!!eval ',''))
+        a = eval(ctx.message.content.replace('?eval ',''))
         await ctx.send('Input : `' + ev + '`\nOutput : `' + str(a) + '`')
     except Exception as e:
         await ctx.send('Input : `' + ev + '`\nOutput (error) : `' + str(e) + '`')

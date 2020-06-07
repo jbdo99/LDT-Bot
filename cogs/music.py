@@ -437,7 +437,7 @@ class Music(commands.Cog):
         await player.stop()
         await player.disconnect()
         await player.destroy()
-        await ctx.send('Deconnecter.' , delete_after=10)
+        await ctx.send('Déconnecté.' , delete_after=10)
 
     @commands.command(hidden=True)
     async def player_info(self , ctx):

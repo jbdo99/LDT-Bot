@@ -85,8 +85,8 @@ class Moderation(commands.Cog):
         for element in res:
             if element['date'] + datetime.timedelta(seconds=element['duration']) < now:
                 try:
-                    member = discord.utils.get(self.bot.ldt_server.members, id=element['user'])
-                    await member.unban()
+                    user = await self.bot.fetch_user(element['user'])
+                    await self.bot.ldt_server.unban(user)
                 except Exception as e:
                     pass
 
@@ -131,7 +131,7 @@ class Moderation(commands.Cog):
         date = datetime.datetime.now()
         for member in members:
             await member.send(
-                f"Vous avez été banni temporairement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}. Votre bannissement est de {ban_days} jour(s)")
+                f"Vous avez été banni temporairement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}. Votre bannissement est de {humanize.naturaldelta(datetime.timedelta(seconds=ban_days))}")
             embed = self.embed_constructor()
             embed.title = "Log Modération : TempBan"
             embed.add_field(name="Nom :", value=member.name)

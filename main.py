@@ -161,17 +161,17 @@ async def mute_task():
         except Exception as e:
             print("Warning error in mute tasks")
             print(e)
-            await asyncio.sleep(120)
+            await asyncio.sleep(60)
 
 async def ban_task():
     while not bot.is_closed():
         try:
             modcog = bot.get_cog("Moderation")
             await modcog.ban_reload()
-            await asyncio.sleep(3600)
+            await asyncio.sleep(1800)
         except Exception as e:
             print("Warning error in ban tasks")
-            await asyncio.sleep(3600)
+            await asyncio.sleep(1800)
 
 try:
     bot.loop.create_task(mute_task())

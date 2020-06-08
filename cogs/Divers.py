@@ -16,6 +16,18 @@ class Divers(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.confess_chan = discord.utils.get(self.bot.ldt_server.channels, id=permissions_config['divers']['confession_chan_post'])
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.channel.id == self.bot.config['divers']['confession_chan_get']:
+            now = datetime.datetime.now()
+            await self.confess_chan.send(f"Confession envoyée le {now.day}/{now.month}/{now.year} : \n"+str(message.content))
+            await message.delete()
+
+
     @commands.command()
     @commands.has_role(permissions_config['divers']['gode_perms'])
     async def gode(self, ctx):

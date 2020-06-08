@@ -22,7 +22,7 @@
   "divers": {
     "image_perms": 719299208913616990,
     "gode_perms" : 719299208913616990,
-    "confession_chan_1": 719303572860174408,
-    "confession_chan_2": 719303597250183540
+    "confession_chan_get": 719303572860174408,
+    "confession_chan_post": 719303597250183540
   }
 }

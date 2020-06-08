@@ -45,13 +45,32 @@ class Moderation(commands.Cog):
         )
         return embed
 
+    def duration_parser(self, text):
+        try:
+            if "s" in text:
+                return int(text.replace("s", ""))
+            elif "m" in text:
+                return int(text.replace("m", "")) * 60
+            elif "h" in text:
+                return int(text.replace("h", "")) * 3600
+            elif "d" in text:
+                return int(text.replace("d", "")) * 86400
+            elif "mo" in text:
+                return int(text.replace("mo", "")) * 2592000
+            elif "y" in text:
+                return int(text.replace("y", "")) * 31536000
+            else:
+                return None
+        except:
+            return None
+
     async def mute_reload(self):
         loop = asyncio.get_event_loop()
         now = datetime.datetime.now()
         res = await loop.run_in_executor(None, self.bot.db.db.mod.find,
-                                         {'type': 'mute', 'date': {'$gte': now - datetime.timedelta(days=1)}})
+                                         {'type': 'mute', 'date': {'$gte': now - datetime.timedelta(days=7)}})
         for element in res:
-            if element['date'] + datetime.timedelta(hours=element['duration']) < now:
+            if element['date'] + datetime.timedelta(seconds=element['duration']) < now:
                 try:
                     member = discord.utils.get(self.bot.ldt_server.members, id=element['user'])
                     await member.remove_roles(self.mute_role)
@@ -64,7 +83,7 @@ class Moderation(commands.Cog):
         res = await loop.run_in_executor(None, self.bot.db.db.mod.find,
                                          {'type': 'tempban'})
         for element in res:
-            if element['date'] + datetime.timedelta(days=element['duration']) < now:
+            if element['date'] + datetime.timedelta(seconds=element['duration']) < now:
                 try:
                     member = discord.utils.get(self.bot.ldt_server.members, id=element['user'])
                     await member.unban()
@@ -97,7 +116,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def tempban(self, ctx, members: commands.Greedy[discord.Member], ban_days: int = 1,
+    async def tempban(self, ctx, members: commands.Greedy[discord.Member], ban_days: str = "30d",
                       delete_days: typing.Optional[int] = 0, *,
                       reason: str = 'Pas de raisons'):
         """
@@ -106,6 +125,9 @@ class Moderation(commands.Cog):
         Exemple : `?tempban @weeb 365 pour le fun`
         De plus on peut ban plusieur personnes d'un coup : `?tempban @membre1 @membre2 @membre3 nombre_de_jour raison`
         """
+        ban_days = int(self.duration_parser(ban_days))
+        if ban_days is None:
+            ctx.send("Format non valide")
         date = datetime.datetime.now()
         for member in members:
             await member.send(
@@ -114,7 +136,7 @@ class Moderation(commands.Cog):
             embed.title = "Log Modération : TempBan"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
-            embed.add_field(name="Durée (jours) :", value=ban_days)
+            embed.add_field(name="Durée :", value=humanize.naturaldelta(datetime.timedelta(seconds=ban_days)))
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
@@ -146,13 +168,16 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_role(permissions_config['mod']['mute_perms'])
-    async def mute(self, ctx, members: commands.Greedy[discord.Member], duration: int = 0, *,
+    async def mute(self, ctx, members: commands.Greedy[discord.Member], duration: str = "60m", *,
                    reason: str = 'Pas de raisons'):
         """
         Commande de mute.
-        Utilisation : `?mute @membre nb_heure raison`
-        De plus on peut mute plusieur personnes d'un coup : `?mute @membre1 @membre2 @membre3 nb_heuree raison`
+        Utilisation : `?mute @membre duree raison`
+        De plus on peut mute plusieur personnes d'un coup : `?mute @membre1 @membre2 @membre3 duree raison`
         """
+        duration = int(self.duration_parser(duration))
+        if duration is None:
+            ctx.send("Format non valide")
         date = datetime.datetime.now()
         for member in members:
             await member.send(
@@ -161,7 +186,7 @@ class Moderation(commands.Cog):
             embed.title = "Log Modération : Mute"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
-            embed.add_field(name="Durée (en heures) :", value=duration)
+            embed.add_field(name="Durée :", value=humanize.naturaldelta(datetime.timedelta(seconds=duration)))
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
@@ -214,7 +239,7 @@ class Moderation(commands.Cog):
             # await member.ban(delete_message_days=delete_days, reason=reason)
             await self.send_to_mongo("warn", member.id, 0, date, reason, ctx.author.id)
 
-    @commands.command(aliases=['logdelete', 'moddelete' , 'mremove', 'modrm'])
+    @commands.command(aliases=['logdelete', 'moddelete', 'mremove', 'modrm'])
     @commands.has_role(permissions_config['mod']['management_perms'])
     async def modremove(self, ctx, user: discord.User, index: int = -1):
         """
@@ -225,7 +250,7 @@ class Moderation(commands.Cog):
         await self.bot.db.delete_mod(user.id, modlist[index]['_id'])
         await ctx.send("Entrée supprimé de la base de données")
 
-    @commands.command(aliases=['loginfo' , 'minfo', 'mod', 'info'])
+    @commands.command(aliases=['loginfo', 'minfo', 'mod', 'info'])
     @commands.has_role(permissions_config['mod']['management_perms'])
     async def modinfo(self, ctx, user: discord.User):
         """
@@ -255,7 +280,7 @@ class Moderation(commands.Cog):
         """
         try:
             await member.add_roles(self.blhsf_role)
-            await ctx.send(f"{ member.name } a été ajouté a la blacklist `hsf`")
+            await ctx.send(f"{member.name} a été ajouté a la blacklist `hsf`")
         except:
             pass
 
@@ -284,5 +309,3 @@ class Moderation(commands.Cog):
             await ctx.send(f"{member.name} a été ajouté a la blacklist `d`")
         except:
             pass
-
-

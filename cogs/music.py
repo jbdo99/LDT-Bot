@@ -181,6 +181,7 @@ class Music(commands.Cog):
             return True
 
     @commands.command(name='join' , aliases=['connect'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def connect_(self , ctx , * , channel: discord.VoiceChannel = None):
         """Connect to a voice channel."""
         if not channel:
@@ -199,6 +200,7 @@ class Music(commands.Cog):
 
 
     @commands.command(aliases=['sb' , 'sound'])
+    @commands.has_role(permissions_config['music']['soundbox_perms'])
     async def soundbox(self , ctx , * , query: str = None):
         """Soundbox"""
         print('Hey')
@@ -236,6 +238,7 @@ class Music(commands.Cog):
 
 
     @commands.command(aliases=['p' , 'song'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def play(self , ctx , * , query: str = None):
         """Search for and add a song to the Queue."""
 
@@ -284,6 +287,7 @@ class Music(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def pause(self , ctx):
         """Pause the player."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
@@ -297,6 +301,7 @@ class Music(commands.Cog):
         await player.set_pause(True)
 
     @commands.command(aliases=['res'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def resume(self , ctx):
         """Resume the player."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
@@ -310,6 +315,7 @@ class Music(commands.Cog):
         await player.set_pause(False)
 
     @commands.command(aliases=['next'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def skip(self , ctx):
         """Skip the currently playing song."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
@@ -323,6 +329,7 @@ class Music(commands.Cog):
         await player.stop()
 
     @commands.command(aliases=['vol'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def volume(self , ctx , * , vol: int):
         """Set the player volume."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
@@ -337,6 +344,7 @@ class Music(commands.Cog):
         await player.set_volume(vol)
 
     @commands.command(aliases=['eq'])
+    @commands.has_role(permissions_config['music']['effect_perms'])
     async def equalizer(self , ctx: commands.Context , * , equalizer: str = 'None'):
         """Change the player equalizer."""
 
@@ -361,6 +369,7 @@ class Music(commands.Cog):
         await ctx.send(f'Equalizer definie sur {equalizer}')
 
     @commands.command(aliases=['bass'])
+    @commands.has_role(permissions_config['music']['effect_perms'])
     async def BassBoost(self , ctx: commands.Context , * , boost: int = 1):
         """Bass Boost"""
 
@@ -378,6 +387,7 @@ class Music(commands.Cog):
         await ctx.send(f'Bass Booster! x{str(boost)}')
 
     @commands.command(aliases=['np' , 'current' , 'nowplaying' , 'now_playing'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def playing(self , ctx):
         """Retrieve the currently playing song."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
@@ -402,6 +412,7 @@ class Music(commands.Cog):
         controller.now_playing = await ctx.send(embed=embed)
 
     @commands.command(aliases=['q'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def queue(self , ctx):
         """Retrieve information on the next songs from the queue."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
@@ -420,6 +431,7 @@ class Music(commands.Cog):
 
 
     @commands.command(aliases=['disconnect' , 'dc' , 'leave'])
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def stop(self , ctx):
         """Stop and disconnect the player and controller."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
@@ -444,6 +456,7 @@ class Music(commands.Cog):
         await ctx.send('Déconnecté.' , delete_after=10)
 
     @commands.command(hidden=True)
+    @commands.has_role(permissions_config['music']['music_perms'])
     async def player_info(self , ctx):
         player = self.bot.wavelink.get_player(ctx.guild.id)
         node = player.node

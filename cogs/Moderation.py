@@ -121,9 +121,9 @@ class Moderation(commands.Cog):
                       reason: str = 'Pas de raisons'):
         """
         Commande de ban temporaire.
-        Utilisation : `?tempban @membre nombre_de_jour raison`
-        Exemple : `?tempban @weeb 365 pour le fun`
-        De plus on peut ban plusieur personnes d'un coup : `?tempban @membre1 @membre2 @membre3 nombre_de_jour raison`
+        Utilisation : `?tempban @membre duree raison`
+        Exemple : `?tempban @weeb 365d pour le fun`
+        De plus on peut ban plusieur personnes d'un coup : `?tempban @membre1 @membre2 @membre3 duree raison`
         """
         ban_days = int(self.duration_parser(ban_days))
         if ban_days is None:
@@ -254,7 +254,7 @@ class Moderation(commands.Cog):
     @commands.has_role(permissions_config['mod']['management_perms'])
     async def modinfo(self, ctx, user: discord.User):
         """
-        nodocnow
+        Affiche la liste de toutes les sanctiosn prise contre un utilisateur
         """
         modlist = await self.bot.db.get_all_mod_from(user.id)
         embed = self.embed_constructor()

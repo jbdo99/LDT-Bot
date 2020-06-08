@@ -24,7 +24,17 @@ class Divers(commands.Cog):
     async def on_message(self, message):
         if message.channel.id == self.bot.config['divers']['confession_chan_get']:
             now = datetime.datetime.now()
-            await self.confess_chan.send(f"Confession envoyée le {now.day}/{now.month}/{now.year} : \n"+str(message.content))
+            embed = discord.Embed(
+                type="rich",
+                color=discord.Colour.dark_red(),
+            )
+            embed.set_author(
+                name='Ligue Des Trolleurs™',
+                icon_url="https://cdn.discordapp.com/icons/464745857217200128/a_168e8604add366fc621c4ebec8cbabe5.gif?size=1024"
+            )
+            embed.title = f"Confession envoyée le {now.day}/{now.month}/{now.year} : \n"
+            embed.description = str(message.content)
+            await self.confess_chan.send(embed=embed)
             await message.delete()
 
 
@@ -32,7 +42,7 @@ class Divers(commands.Cog):
     @commands.has_role(permissions_config['divers']['gode_perms'])
     async def gode(self, ctx):
         """
-        Ajoute un gode. Disponible une fois par semaine
+        Ajoute un gode. Disponible une fois par jour
         """
         r = await self.bot.db.add_gode(ctx.author.id)
         if r:
@@ -44,7 +54,7 @@ class Divers(commands.Cog):
     @commands.has_role(permissions_config['divers']['gode_perms'])
     async def mygode(self, ctx, member: discord.Member = None):
         """
-        Recupere les godes
+        Affiche vos godes
         """
         if member is None:
             r = await self.bot.db.get_gode(ctx.author.id)
@@ -63,7 +73,7 @@ class Divers(commands.Cog):
     @commands.has_role(permissions_config['divers']['gode_perms'])
     async def topgode(self, ctx):
         """
-        Top 5 gode
+        Top 5 des membres les plus godé
         """
         embed = discord.Embed(
             type="rich",

@@ -20,6 +20,9 @@ class Moderation(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.mute_role = self.bot.ldt_server.get_role(permissions_config['mod']['mute_role'])
+        self.blhsf_role = self.bot.ldt_server.get_role(permissions_config['bl']['blhsf_role'])
+        self.bltds_role = self.bot.ldt_server.get_role(permissions_config['bl']['bltds_role'])
+        self.bld_role = self.bot.ldt_server.get_role(permissions_config['bl']['bld_role'])
 
     def is_me(self, m):
         return m.author == self.bot.user
@@ -211,7 +214,7 @@ class Moderation(commands.Cog):
             # await member.ban(delete_message_days=delete_days, reason=reason)
             await self.send_to_mongo("warn", member.id, 0, date, reason, ctx.author.id)
 
-    @commands.command()
+    @commands.command(aliases=['logdelete', 'moddelete' , 'mremove', 'modrm'])
     @commands.has_role(permissions_config['mod']['management_perms'])
     async def modremove(self, ctx, user: discord.User, index: int = -1):
         """
@@ -222,7 +225,7 @@ class Moderation(commands.Cog):
         await self.bot.db.delete_mod(user.id, modlist[index]['_id'])
         await ctx.send("Entrée supprimé de la base de données")
 
-    @commands.command()
+    @commands.command(aliases=['loginfo' , 'minfo', 'mod', 'info'])
     @commands.has_role(permissions_config['mod']['management_perms'])
     async def modinfo(self, ctx, user: discord.User):
         """
@@ -242,3 +245,44 @@ class Moderation(commands.Cog):
         else:
             embed.add_field(name="Liste : ", value="Pas de sanction trouvée pour cet utilisateur")
         await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.has_role(permissions_config['bl']['blhsf_perms'])
+    async def blhsf(self, ctx, member: discord.Member):
+        """
+        Blhsf
+        Utilisation : `?blhsf @membre `
+        """
+        try:
+            await member.add_roles(self.blhsf_role)
+            await ctx.send(f"{ member.name } a été ajouté a la blacklist `hsf`")
+        except:
+            pass
+
+    @commands.command()
+    @commands.has_role(permissions_config['bl']['bltds_perms'])
+    async def bltds(self, ctx, member: discord.Member):
+        """
+        Bltds
+        Utilisation : `?bltds @membre `
+        """
+        try:
+            await member.add_roles(self.bltds_role)
+            await ctx.send(f"{member.name} a été ajouté a la blacklist `tds`")
+        except:
+            pass
+
+    @commands.command()
+    @commands.has_role(permissions_config['bl']['bld_perms'])
+    async def bld(self, ctx, member: discord.Member):
+        """
+        Bld
+        Utilisation : `?bld @membre `
+        """
+        try:
+            await member.add_roles(self.bld_role)
+            await ctx.send(f"{member.name} a été ajouté a la blacklist `d`")
+        except:
+            pass
+
+

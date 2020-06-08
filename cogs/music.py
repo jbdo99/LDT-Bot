@@ -199,8 +199,8 @@ class Music(commands.Cog):
 
 
 
-    @commands.command(aliases=['sb' , 'sound'])
-    @commands.has_role(permissions_config['music']['soundbox_perms'])
+    @commands.command(aliases=['sb' , 'sound', 'soundboard', 'soundb'])
+    @commands.has_role(permissions_config['music']['soundboard_perms'])
     async def soundbox(self , ctx , * , query: str = None):
         """Soundbox"""
         print('Hey')

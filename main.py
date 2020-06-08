@@ -5,6 +5,7 @@ import random,re
 from cogs.Moderation import Moderation
 from cogs.music import Music
 from cogs.DbMongo import DbMongo
+from cogs.Divers import Divers
 import os
 import json
 import asyncio
@@ -31,6 +32,7 @@ owner = [177375818635280384, 177394669766836224, 685540778474209327]
 
 bot.add_cog(Moderation(bot))
 bot.add_cog(Music(bot, LAVALINK_PASSwORD))
+bot.add_cog(Divers(bot))
 
 if PROD:
     bot.db = DbMongo(host="localhost", username=MDB_USER, password=MDB_PASSWD)

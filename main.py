@@ -37,7 +37,7 @@ bot.add_cog(Divers(bot))
 bot.add_cog(Images(bot))
 
 if PROD:
-    bot.db = DbMongo(host="localhost", username=MDB_USER, password=MDB_PASSWD)
+    bot.db = DbMongo(host="localhost")
 else:
     bot.db = DbMongo(host="sheepbot.net", username=MDB_USER, password=MDB_PASSWD)
 

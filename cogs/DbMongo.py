@@ -8,7 +8,7 @@ with open(os.path.dirname(__file__)[:-4] + 'server.json') as f:
     permissions_config = json.load(f)
 
 class DbMongo:
-    def __init__(self, host, username, password):
+    def __init__(self, host, username=None, password=None):
         """
         MongoDB Interface
         :param host: mongodb host
@@ -16,11 +16,16 @@ class DbMongo:
         :param password: mongodb user's password
         """
         print("conection to", host)
-        client = MongoClient("mongodb://{username}:{password}@{host}".format(
-            username=username,
-            password=password,
-            host=host
-        ))
+        if username is None:
+            client = MongoClient("mongodb://{host}".format(
+                host=host
+            ))
+        else:
+            client = MongoClient("mongodb://{username}:{password}@{host}".format(
+                username=username,
+                password=password,
+                host=host
+            ))
         self.db = client.ldt
 
     async def get_all_mod_from(self, user):

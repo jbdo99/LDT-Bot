@@ -99,10 +99,15 @@ class Moderation(commands.Cog):
         Il est possible d ajouter le nombre de jour dont les messages vont etre supprimé (maximum 7) : `?ban @membre 6 raison`
         De plus on peut ban plusieur personnes d'un coup : `?ban @membre1 @membre2 @membre3 raison`
         """
+        if ctx.author in members:
+            return
         date = datetime.datetime.now()
         for member in members:
-            await member.send(
-                f"Vous avez été banni définitevement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante :{reason}")
+            try:
+                await member.send(
+                    f"Vous avez été banni définitevement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante :{reason}")
+            except:
+                pass
             embed = self.embed_constructor()
             embed.title = "Log Modération : Ban"
             embed.add_field(name="Nom :", value=member.name)
@@ -124,13 +129,18 @@ class Moderation(commands.Cog):
         Exemple : `?tempban @weeb 365d pour le fun`
         De plus on peut ban plusieur personnes d'un coup : `?tempban @membre1 @membre2 @membre3 duree raison`
         """
+        if ctx.author in members:
+            return
         ban_days = int(self.duration_parser(ban_days))
         if ban_days is None:
             ctx.send("Format non valide")
         date = datetime.datetime.now()
         for member in members:
-            await member.send(
+            try:
+                await member.send(
                 f"Vous avez été banni temporairement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}. Votre bannissement est de {humanize.naturaldelta(datetime.timedelta(seconds=ban_days))}")
+            except:
+                pass
             embed = self.embed_constructor()
             embed.title = "Log Modération : TempBan"
             embed.add_field(name="Nom :", value=member.name)
@@ -143,6 +153,26 @@ class Moderation(commands.Cog):
             await self.send_to_mongo("tempban", member.id, ban_days, date, reason, ctx.author.id)
 
     @commands.command()
+    @commands.has_permissions(ban_members=True)
+    async def unban(self, ctx, user: discord.User):
+        """
+        Commande de unban.
+        Utilisation : `?unban @membre`
+        """
+        date = datetime.datetime.now()
+        embed = self.embed_constructor()
+        embed.title = "Log Modération : Unban"
+        embed.add_field(name="Nom :", value=user.name)
+        embed.add_field(name="Auteur :", value=ctx.author.name)
+        embed.add_field(name="Date : ", value=humanize.naturaldate(date))
+        await ctx.send(embed=embed)
+        try:
+            await self.bot.ldt_server.unban(user)
+        except Exception as e:
+            print(e)
+            pass
+
+    @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, members: commands.Greedy[discord.Member], *,
                    reason: str = 'Pas de raisons'):
@@ -151,10 +181,15 @@ class Moderation(commands.Cog):
         Utilisation : `?kick @membre raison`
         De plus on peut kick plusieur personnes d'un coup : `?kick @membre1 @membre2 @membre3 raison`
         """
+        if ctx.author in members:
+            return
         date = datetime.datetime.now()
         for member in members:
-            await member.send(
+            try:
+                await member.send(
                 f"Vous avez été kick du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}")
+            except:
+                pass
             embed = self.embed_constructor()
             embed.title = "Log Modération : Kick"
             embed.add_field(name="Nom :", value=member.name)
@@ -174,13 +209,18 @@ class Moderation(commands.Cog):
         Utilisation : `?mute @membre duree raison`
         De plus on peut mute plusieur personnes d'un coup : `?mute @membre1 @membre2 @membre3 duree raison`
         """
+        if ctx.author in members:
+            return
         duration = int(self.duration_parser(duration))
         if duration is None:
             ctx.send("Format non valide")
         date = datetime.datetime.now()
         for member in members:
-            await member.send(
+            try:
+                await member.send(
                 f"Vous avez été mute du serveur LDT par {ctx.author.name} pendant {duration} minute(s) le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}")
+            except:
+                pass
             embed = self.embed_constructor()
             embed.title = "Log Modération : Mute"
             embed.add_field(name="Nom :", value=member.name)
@@ -190,6 +230,10 @@ class Moderation(commands.Cog):
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
             await member.add_roles(self.mute_role)
+            try:
+                await member.edit(voice_channel=None)
+            except:
+                pass
             await self.send_to_mongo("mute", member.id, duration, date, reason, ctx.author.id)
 
     @commands.command()
@@ -200,10 +244,15 @@ class Moderation(commands.Cog):
         Utilisation : `?unmute @membre`
         De plus on peut mute plusieur personnes d'un coup : `?unmute @membre1 @membre2 @membre3`
         """
+        if ctx.author in members:
+            return
         date = datetime.datetime.now()
         for member in members:
-            await member.send(
+            try:
+                await member.send(
                 f"Vous avez été unmute du serveur LDT par {ctx.author.name} ")
+            except:
+                pass
             embed = self.embed_constructor()
             embed.title = "Log Modération : Unmute"
             embed.add_field(name="Nom :", value=member.name)
@@ -211,8 +260,9 @@ class Moderation(commands.Cog):
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
             try:
-                await member.remove_roles(self.bot.mute_role)
+                await member.remove_roles(self.mute_role)
             except Exception as e:
+                print(e)
                 pass
 
     @commands.command()
@@ -222,12 +272,17 @@ class Moderation(commands.Cog):
         """
         Commande de warn.
         Utilisation : `?warn @membre raison`
-        De plus on peut warn plusieur personnes d'un coup : `?warn @membre1 @membre2 @membre3 nb_minute raison`
+        De plus on peut warn plusieur personnes d'un coup : `?warn @membre1 @membre2 @membre3 raison`
         """
+        if ctx.author in members:
+            return
         date = datetime.datetime.now()
         for member in members:
-            await member.send(
+            try:
+                await member.send(
                 f"Vous avez été warn du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}")
+            except:
+                pass
             embed = self.embed_constructor()
             embed.title = "Log Modération : Warn"
             embed.add_field(name="Nom :", value=member.name)
@@ -235,7 +290,15 @@ class Moderation(commands.Cog):
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
-            # await member.ban(delete_message_days=delete_days, reason=reason)
+            loop = asyncio.get_event_loop()
+            now = datetime.datetime.now()
+            res = await loop.run_in_executor(None, self.bot.db.db.mod.find,
+                                             {'type': 'warn', 'date': {'$gte': now - datetime.timedelta(minutes=5)}})
+            i = 0
+            for element in res:
+                i += 1
+            if i>=2:
+                await member.ban(delete_message_days=1, reason="Auto perma ban suite à 3 warns")
             await self.send_to_mongo("warn", member.id, 0, date, reason, ctx.author.id)
 
     @commands.command(aliases=['logdelete', 'moddelete', 'mremove', 'modrm'])

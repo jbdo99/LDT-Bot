@@ -294,7 +294,6 @@ class Images(commands.Cog):
         if len(txt)>60:
             top = 275
 
-        print(txt)
         F = ImageFont.truetype(font="content/ttf/arimo.ttf", size=size)
         draw.multiline_text(xy, txt, fill=(0, 0, 0, 250), font=F, anchor=None, direction=None,
                             features=None, spacing=2, align="center")
@@ -438,11 +437,9 @@ class Images(commands.Cog):
             i = IMAGE(blob=lol.getvalue())
 
         i.format = 'jpg'
-        print(i.size)
         i.alpha_channel = True
         i.transform(resize='800x800>')
         s = i.size
-        print(s)
         i.liquid_rescale(width=int(i.width * 0.5), height=int(i.height * 0.5),delta_x=1, rigidity=0)
         i.liquid_rescale(width=int(i.width * 1.5), height=int(i.height * 1.5), delta_x=2,rigidity=0)
         #i.sample(s[0],s[1])
@@ -477,7 +474,6 @@ class Images(commands.Cog):
             pic = urllib.parse.quote(str(pic))
             if intense:url = "https://nekobot.xyz/api/imagegen?type=magik&intensity="+str(intense)+"&image=" + str(pic)
             else:url = "https://nekobot.xyz/api/imagegen?type=magik&image=" + str(pic)
-            print(url)
             js = await self.httpget(url)
             image_url = js['message']
             embed = discord.Embed(color=random.randint(0 , 0xFFFFFF))
@@ -837,7 +833,6 @@ class Images(commands.Cog):
         """send a tweet"""
         await ctx.trigger_typing()
         url = "https://nekobot.xyz/api/imagegen?type=changemymind&text="+urllib.parse.quote(str(text))
-        print(str(url))
 
         js = await self.httpget(url)
 

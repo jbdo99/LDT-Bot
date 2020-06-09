@@ -62,17 +62,13 @@ class DbMongo:
         """
         loop = asyncio.get_event_loop()
         actual = await loop.run_in_executor(None, self.db.gode.find_one, {'user': user})
-        print("research find", actual)
         now = datetime.datetime.now()
         if actual is None:
-            print("On doit avoir zero result")
             res = await loop.run_in_executor(None, self.db.gode.insert_one, {'user': user, 'date': now, 'gode': 1})
         else:
             if actual['date'].day != now.day:
-                print("gode totu ok")
                 res = await loop.run_in_executor(None, self.db.gode.update_one, {'user': user}, {'$set': {'date': now}, '$inc': {'gode': 1}})
             else:
-                print("meme jour")
                 return False
         return True
 

@@ -203,7 +203,6 @@ class Music(commands.Cog):
     @commands.has_role(permissions_config['music']['soundboard_perms'])
     async def soundbox(self , ctx , * , query: str = None):
         """Soundbox"""
-        print('Hey')
         box = os.listdir('music/soundbox')
         list_box = [i.replace('.mp3','') for i in box if i.endswith('mp3')]
         

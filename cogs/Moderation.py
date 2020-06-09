@@ -32,7 +32,6 @@ class Moderation(commands.Cog):
         Send data to mongodb
         """
         await self.bot.db.add_log_mod(moderation_type, user, duration, date, reason, provider)
-        print("Log registered")
 
     def embed_constructor(self=None):
         embed = discord.Embed(

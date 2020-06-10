@@ -257,7 +257,7 @@ class Music(commands.Cog):
         if not tracks:
             tracks = await self.bot.wavelink.get_tracks(f'{query}')
             if not tracks:
-                return await ctx.send("dsl je n'ai rien trouver.")
+                return await ctx.send("Musique introuvable")
 
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.is_connected:

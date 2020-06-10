@@ -109,7 +109,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             embed = self.embed_constructor()
-            embed.title = "Log Modération : Ban"
+            embed.title = "Bannissement"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Auteur :", value=ctx.author.name)
@@ -142,7 +142,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             embed = self.embed_constructor()
-            embed.title = "Log Modération : TempBan"
+            embed.title = "Bannissement temporaire"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Durée :", value=humanize.naturaldelta(datetime.timedelta(seconds=ban_days)))
@@ -161,7 +161,7 @@ class Moderation(commands.Cog):
         """
         date = datetime.datetime.now()
         embed = self.embed_constructor()
-        embed.title = "Log Modération : Unban"
+        embed.title = "Debannissement"
         embed.add_field(name="Nom :", value=user.name)
         embed.add_field(name="Auteur :", value=ctx.author.name)
         embed.add_field(name="Date : ", value=humanize.naturaldate(date))
@@ -191,7 +191,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             embed = self.embed_constructor()
-            embed.title = "Log Modération : Kick"
+            embed.title = "Kick"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Auteur :", value=ctx.author.name)
@@ -222,7 +222,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             embed = self.embed_constructor()
-            embed.title = "Log Modération : Mute"
+            embed.title = "Mute"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Durée :", value=humanize.naturaldelta(datetime.timedelta(seconds=duration)))
@@ -254,7 +254,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             embed = self.embed_constructor()
-            embed.title = "Log Modération : Unmute"
+            embed.title = "Demute"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
@@ -284,7 +284,7 @@ class Moderation(commands.Cog):
             except:
                 pass
             embed = self.embed_constructor()
-            embed.title = "Log Modération : Warn"
+            embed.title = "Avertissement"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Auteur :", value=ctx.author.name)
@@ -320,7 +320,7 @@ class Moderation(commands.Cog):
         """
         modlist = await self.bot.db.get_all_mod_from(user.id)
         embed = self.embed_constructor()
-        embed.title = f"Mod log for {user.name}"
+        embed.title = f"Historique des sanctions pour {user.name}"
         if len(modlist) > 0:
             textlist = []
             id = 0

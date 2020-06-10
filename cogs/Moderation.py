@@ -17,12 +17,32 @@ class Moderation(commands.Cog):
         self.bot = bot
         humanize.i18n.activate("fr_FR")
 
-    @commands.Cog.listener()
-    async def on_ready(self):
+    def reload_chan(self):
         self.mute_role = self.bot.ldt_server.get_role(permissions_config['mod']['mute_role'])
         self.blhsf_role = self.bot.ldt_server.get_role(permissions_config['bl']['blhsf_role'])
         self.bltds_role = self.bot.ldt_server.get_role(permissions_config['bl']['bltds_role'])
         self.bld_role = self.bot.ldt_server.get_role(permissions_config['bl']['bld_role'])
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.reload_chan()
+        while True:
+            if self.mute_role is None:
+                self.reload_chan()
+            await asyncio.sleep(30)
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        loop = asyncio.get_event_loop()
+        now = datetime.datetime.now()
+        res = await loop.run_in_executor(None, self.bot.db.db.mod.find,
+                                         {'type': 'mute', 'user': member.id})
+        for element in res:
+            if element['date'] + datetime.timedelta(seconds=element['duration']) > now:
+                try:
+                    await member.add_roles(self.mute_role)
+                except Exception as e:
+                    pass
 
     def is_me(self, m):
         return m.author == self.bot.user
@@ -67,7 +87,7 @@ class Moderation(commands.Cog):
         loop = asyncio.get_event_loop()
         now = datetime.datetime.now()
         res = await loop.run_in_executor(None, self.bot.db.db.mod.find,
-                                         {'type': 'mute', 'date': {'$gte': now - datetime.timedelta(days=7)}})
+                                         {'type': 'mute'})
         for element in res:
             if element['date'] + datetime.timedelta(seconds=element['duration']) < now:
                 try:
@@ -91,7 +111,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, members: commands.Greedy[discord.Member], delete_days: typing.Optional[int] = 0, *,
+    async def ban(self, ctx, members: commands.Greedy[discord.User], delete_days: typing.Optional[int] = 0, *,
                   reason: str = 'Pas de raisons'):
         """
         Commande de ban.
@@ -218,7 +238,7 @@ class Moderation(commands.Cog):
         for member in members:
             try:
                 await member.send(
-                f"Vous avez été mute du serveur LDT par {ctx.author.name} pendant {duration} minute(s) le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}")
+                f"Vous avez été mute du serveur LDT par {ctx.author.name} pendant {humanize.naturaldelta(datetime.timedelta(seconds=duration))} le {date.day}/{date.month}/{date.year} pour la raison suivante : {reason}")
             except:
                 pass
             embed = self.embed_constructor()
@@ -229,6 +249,8 @@ class Moderation(commands.Cog):
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
+            if self.mute_role is None:
+                self.reload_chan()
             await member.add_roles(self.mute_role)
             try:
                 await member.edit(voice_channel=None)

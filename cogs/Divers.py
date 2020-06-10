@@ -35,7 +35,16 @@ class Divers(commands.Cog):
             embed.title = f"Confession envoyée le {now.day}/{now.month}/{now.year} : \n"
             embed.description = str(message.content)
             await message.delete()
-            await self.confess_chan.send(embed=embed)
+            if self.confess_chan:
+                await self.confess_chan.send(embed=embed)
+            else:
+                try:
+                    self.confess_chan = discord.utils.get(self.bot.ldt_server.channels ,
+                                                          id=permissions_config['divers']['confession_chan_post'])
+                    await self.confess_chan.send(embed=embed)
+                except Exception as e:
+                    print('Erreur : '+str(e))
+
 
 
 

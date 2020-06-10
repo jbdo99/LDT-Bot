@@ -34,8 +34,9 @@ class Divers(commands.Cog):
             )
             embed.title = f"Confession envoyée le {now.day}/{now.month}/{now.year} : \n"
             embed.description = str(message.content)
-            await self.confess_chan.send(embed=embed)
             await message.delete()
+            await self.confess_chan.send(embed=embed)
+
 
 
     @commands.command()

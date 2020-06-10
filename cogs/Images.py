@@ -201,31 +201,6 @@ class Images(commands.Cog):
         lol.seek(0)
         return lol
 
-
-
-
-    @commands.command(pass_context=True, no_pm=True, rest_is_raw=True)
-    @commands.cooldown(2, 4, type=commands.BucketType.channel)
-    async def dick(self, ctx, *, userD: str = None):
-        """Make something suck ..."""
-        try:
-            await ctx.trigger_typing()
-            url = False
-            if userD:
-                pass
-            else:
-                ctx.message.mentions.append(ctx.message.author)
-            if True:
-                if True:
-                    loop = asyncio.get_event_loop()
-                    txt = userD or ctx.message.author.name
-                    lol = await loop.run_in_executor(None, functools.partial(Images.dicki, txt))
-                    await ctx.send(file=discord.File(lol, filename=None))
-                    return
-        except Exception as e:
-            await ctx.send("error : ```" + str(e) + "```")
-
-
     def sonn(txt):
         im1 = Image.open("content/img/opi.jpg")
         im2 = Image.new('RGBA', (300, 100))

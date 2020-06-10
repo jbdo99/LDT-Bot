@@ -347,6 +347,19 @@ class Moderation(commands.Cog):
             pass
 
     @commands.command()
+    @commands.has_role(permissions_config['bl']['blhsf_perms'])
+    async def unblhsf(self, ctx, member: discord.Member):
+        """
+        unBlhsf
+        Utilisation : `?unblhsf @membre `
+        """
+        try:
+            await member.remove_roles(self.blhsf_role)
+            await ctx.send(f"{member.name} a été retiré a la blacklist `hsf`")
+        except:
+            pass
+
+    @commands.command()
     @commands.has_role(permissions_config['bl']['bltds_perms'])
     async def bltds(self, ctx, member: discord.Member):
         """
@@ -360,6 +373,19 @@ class Moderation(commands.Cog):
             pass
 
     @commands.command()
+    @commands.has_role(permissions_config['bl']['bltds_perms'])
+    async def unbltds(self, ctx, member: discord.Member):
+        """
+        unBltds
+        Utilisation : `?unbltds @membre `
+        """
+        try:
+            await member.remove_roles(self.bltds_role)
+            await ctx.send(f"{member.name} a été retiré a la blacklist `tds`")
+        except:
+            pass
+
+    @commands.command()
     @commands.has_role(permissions_config['bl']['bld_perms'])
     async def bld(self, ctx, member: discord.Member):
         """
@@ -369,5 +395,18 @@ class Moderation(commands.Cog):
         try:
             await member.add_roles(self.bld_role)
             await ctx.send(f"{member.name} a été ajouté a la blacklist `d`")
+        except:
+            pass
+
+    @commands.command()
+    @commands.has_role(permissions_config['bl']['bld_perms'])
+    async def unbld(self, ctx, member: discord.Member):
+        """
+        unBld
+        Utilisation : `?unbld @membre `
+        """
+        try:
+            await member.remove_roles(self.bld_role)
+            await ctx.send(f"{member.name} a été retiré a la blacklist `d`")
         except:
             pass

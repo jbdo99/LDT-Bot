@@ -106,6 +106,7 @@ class Moderation(commands.Cog):
                 try:
                     user = await self.bot.fetch_user(element['user'])
                     await self.bot.ldt_server.unban(user)
+                    await user.send("Votre bannissement du serveur LDT a pris fin ! ")
                 except Exception as e:
                     pass
 
@@ -140,7 +141,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def tempban(self, ctx, members: commands.Greedy[discord.Member], ban_days: str = "30d",
+    async def tempban(self, ctx, members: commands.Greedy[discord.User], ban_days: str = "30d",
                       delete_days: typing.Optional[int] = 0, *,
                       reason: str = 'Pas de raisons'):
         """
@@ -194,7 +195,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, members: commands.Greedy[discord.Member], *,
+    async def kick(self, ctx, members: commands.Greedy[discord.User], *,
                    reason: str = 'Pas de raisons'):
         """
         Commande de kick.
@@ -222,7 +223,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_role(permissions_config['mod']['mute_perms'])
-    async def mute(self, ctx, members: commands.Greedy[discord.Member], duration: str = "60m", *,
+    async def mute(self, ctx, members: commands.Greedy[discord.User], duration: str = "60m", *,
                    reason: str = 'Pas de raisons'):
         """
         Commande de mute.
@@ -260,7 +261,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_role(permissions_config['mod']['mute_perms'])
-    async def unmute(self, ctx, members: commands.Greedy[discord.Member]):
+    async def unmute(self, ctx, members: commands.Greedy[discord.User]):
         """
         Commande de unmute.
         Utilisation : `?unmute @membre`
@@ -289,7 +290,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_role(permissions_config['mod']['warn_perms'])
-    async def warn(self, ctx, members: commands.Greedy[discord.Member], *,
+    async def warn(self, ctx, members: commands.Greedy[discord.User], *,
                    reason: str = 'Pas de raisons'):
         """
         Commande de warn.
@@ -321,6 +322,7 @@ class Moderation(commands.Cog):
                 i += 1
             if i>=2:
                 await member.ban(delete_message_days=1, reason="Auto perma ban suite à 3 warns")
+                await self.send_to_mongo("tempban", member.id, 86400, date, "Auto perma ban suite à 3 warns", ctx.author.id)
             await self.send_to_mongo("warn", member.id, 0, date, reason, ctx.author.id)
 
     @commands.command(aliases=['logdelete', 'moddelete', 'mremove', 'modrm'])

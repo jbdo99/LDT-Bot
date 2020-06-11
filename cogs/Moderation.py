@@ -112,7 +112,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, members: commands.Greedy[discord.User], delete_days: typing.Optional[int] = 0, *,
+    async def ban(self, ctx, members: commands.Greedy[discord.User], *,
                   reason: str = 'Pas de raisons'):
         """
         Commande de ban.
@@ -136,13 +136,12 @@ class Moderation(commands.Cog):
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
-            await member.ban(delete_message_days=delete_days, reason=reason)
+            await self.bot.ldt_server.ban(member, reason=reason)
             await self.send_to_mongo("ban", member.id, -1, date, reason, ctx.author.id)
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def tempban(self, ctx, members: commands.Greedy[discord.User], ban_days: str = "30d",
-                      delete_days: typing.Optional[int] = 0, *,
+    async def tempban(self, ctx, members: commands.Greedy[discord.User], ban_days: str = "30d", *,
                       reason: str = 'Pas de raisons'):
         """
         Commande de ban temporaire.
@@ -170,7 +169,7 @@ class Moderation(commands.Cog):
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
-            await member.ban(delete_message_days=delete_days, reason=reason)
+            await self.bot.ldt_server.ban(member, reason=reason)
             await self.send_to_mongo("tempban", member.id, ban_days, date, reason, ctx.author.id)
 
     @commands.command()

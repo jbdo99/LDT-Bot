@@ -125,7 +125,13 @@ class Moderation(commands.Cog):
                 id = int(reason[:18])
                 await ctx.guild.ban(discord.Object(id), reason=reason)
                 await self.send_to_mongo("ban", id, -1, datetime.datetime.now(), reason, ctx.author.id)
-                await ctx.send("membre banni")
+                embed = self.embed_constructor()
+                embed.title = "Bannissement"
+                embed.add_field(name="Nom :", value=str(id))
+                embed.add_field(name="Raison :", value=reason)
+                embed.add_field(name="Auteur :", value=ctx.author.name)
+                embed.add_field(name="Date : ", value=humanize.naturaldate(datetime.datetime.now()))
+                await ctx.send(embed=embed)
                 return
             except:
                 pass

@@ -120,10 +120,20 @@ class Moderation(commands.Cog):
         Il est possible d ajouter le nombre de jour dont les messages vont etre supprimé (maximum 7) : `?ban @membre 6 raison`
         De plus on peut ban plusieur personnes d'un coup : `?ban @membre1 @membre2 @membre3 raison`
         """
+        if len(members) == 0:
+            try:
+                id = int(reason[:18])
+                await ctx.guild.ban(discord.Object(id), reason=reason)
+                await self.send_to_mongo("ban", id, -1, datetime.datetime.now(), reason, ctx.author.id)
+                await ctx.send("membre banni")
+                return
+            except:
+                pass
         if ctx.author in members:
             return
         date = datetime.datetime.now()
         for member in members:
+            print("la")
             try:
                 await member.send(
                     f"Vous avez été banni définitevement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante :{reason}")
@@ -135,7 +145,10 @@ class Moderation(commands.Cog):
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
-            await ctx.guild.ban(member, reason=reason)
+            try:
+                await ctx.guild.ban(member, reason=reason)
+            except Exception as e:
+                print(e)
             await ctx.send(embed=embed)
             await self.send_to_mongo("ban", member.id, -1, date, reason, ctx.author.id)
 
@@ -223,7 +236,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_role(permissions_config['mod']['mute_perms'])
-    async def mute(self, ctx, members: commands.Greedy[discord.User], duration: str = "60m", *,
+    async def mute(self, ctx, members: commands.Greedy[discord.Member], duration: str = "60m", *,
                    reason: str = 'Pas de raisons'):
         """
         Commande de mute.
@@ -261,7 +274,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_role(permissions_config['mod']['mute_perms'])
-    async def unmute(self, ctx, members: commands.Greedy[discord.User]):
+    async def unmute(self, ctx, members: commands.Greedy[discord.Member]):
         """
         Commande de unmute.
         Utilisation : `?unmute @membre`

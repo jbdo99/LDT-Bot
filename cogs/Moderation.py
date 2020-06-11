@@ -135,8 +135,8 @@ class Moderation(commands.Cog):
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
-            await ctx.send(embed=embed)
             await ctx.guild.ban(member, reason=reason)
+            await ctx.send(embed=embed)
             await self.send_to_mongo("ban", member.id, -1, date, reason, ctx.author.id)
 
     @commands.command()
@@ -168,8 +168,8 @@ class Moderation(commands.Cog):
             embed.add_field(name="Durée :", value=humanize.naturaldelta(datetime.timedelta(seconds=ban_days)))
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
-            await ctx.send(embed=embed)
             await ctx.guild.ban(member, reason=reason)
+            await ctx.send(embed=embed)
             await self.send_to_mongo("tempban", member.id, ban_days, date, reason, ctx.author.id)
 
     @commands.command()
@@ -185,12 +185,13 @@ class Moderation(commands.Cog):
         embed.add_field(name="Nom :", value=user.name)
         embed.add_field(name="Auteur :", value=ctx.author.name)
         embed.add_field(name="Date : ", value=humanize.naturaldate(date))
-        await ctx.send(embed=embed)
         try:
             await ctx.guild.unban(user)
+            await user.send("Votre bannissement du serveur LDT a pris fin ! ")
         except Exception as e:
             print(e)
             pass
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.has_permissions(kick_members=True)

@@ -136,7 +136,7 @@ class Moderation(commands.Cog):
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
-            await self.bot.ldt_server.ban(member, reason=reason)
+            await ctx.guild.ban(member, reason=reason)
             await self.send_to_mongo("ban", member.id, -1, date, reason, ctx.author.id)
 
     @commands.command()
@@ -169,7 +169,7 @@ class Moderation(commands.Cog):
             embed.add_field(name="Auteur :", value=ctx.author.name)
             embed.add_field(name="Date : ", value=humanize.naturaldate(date))
             await ctx.send(embed=embed)
-            await self.bot.ldt_server.ban(member, reason=reason)
+            await ctx.guild.ban(member, reason=reason)
             await self.send_to_mongo("tempban", member.id, ban_days, date, reason, ctx.author.id)
 
     @commands.command()
@@ -187,7 +187,7 @@ class Moderation(commands.Cog):
         embed.add_field(name="Date : ", value=humanize.naturaldate(date))
         await ctx.send(embed=embed)
         try:
-            await self.bot.ldt_server.unban(user)
+            await ctx.guild.unban(user)
         except Exception as e:
             print(e)
             pass

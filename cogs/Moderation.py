@@ -128,7 +128,7 @@ class Moderation(commands.Cog):
                 embed = self.embed_constructor()
                 embed.title = "Bannissement"
                 embed.add_field(name="Nom :", value=str(id))
-                embed.add_field(name="Raison :", value=reason)
+                embed.add_field(name="Raison :", value=reason[19:])
                 embed.add_field(name="Auteur :", value=ctx.author.name)
                 embed.add_field(name="Date : ", value=humanize.naturaldate(datetime.datetime.now()))
                 await ctx.send(embed=embed)

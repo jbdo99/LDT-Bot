@@ -89,7 +89,7 @@ class Moderation(commands.Cog):
         res = await loop.run_in_executor(None, self.bot.db.db.mod.find,
                                          {'type': 'mute'})
         for element in res:
-            if element['date'] + datetime.timedelta(seconds=element['duration']) < now:
+            if element['date'] + datetime.timedelta(seconds=element['duration']) < now and element['date'] + datetime.timedelta(seconds=element['duration']) + datetime.timedelta(minutes=2) > now:
                 try:
                     member = discord.utils.get(self.bot.ldt_server.members, id=element['user'])
                     await member.remove_roles(self.mute_role)
@@ -102,7 +102,7 @@ class Moderation(commands.Cog):
         res = await loop.run_in_executor(None, self.bot.db.db.mod.find,
                                          {'type': 'tempban'})
         for element in res:
-            if element['date'] + datetime.timedelta(seconds=element['duration']) < now:
+            if element['date'] + datetime.timedelta(seconds=element['duration']) < now and element['date'] + datetime.timedelta(seconds=element['duration']) + datetime.timedelta(hours=6) > now:
                 try:
                     user = await self.bot.fetch_user(element['user'])
                     await self.bot.ldt_server.unban(user)
@@ -271,7 +271,10 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
             if self.mute_role is None:
                 self.reload_chan()
-            await member.add_roles(self.mute_role)
+            try:
+                await member.add_roles(self.mute_role)
+            except:
+                await ctx.send("Probleme lors de l attribution du role")
             try:
                 await member.edit(voice_channel=None)
             except:

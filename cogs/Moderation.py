@@ -241,7 +241,7 @@ class Moderation(commands.Cog):
             await self.send_to_mongo("kick", member.id, 0, date, reason, ctx.author.id)
 
     @commands.command()
-    @commands.has_role(permissions_config['mod']['mute_perms'])
+    @commands.has_any_role(*permissions_config['mod']['mute_perms'])
     async def mute(self, ctx, members: commands.Greedy[discord.Member], duration: str = "60m", *,
                    reason: str = 'Pas de raisons'):
         """
@@ -282,7 +282,7 @@ class Moderation(commands.Cog):
             await self.send_to_mongo("mute", member.id, duration, date, reason, ctx.author.id)
 
     @commands.command()
-    @commands.has_role(permissions_config['mod']['mute_perms'])
+    @commands.has_any_role(*permissions_config['mod']['mute_perms'])
     async def unmute(self, ctx, members: commands.Greedy[discord.Member]):
         """
         Commande de unmute.
@@ -311,7 +311,7 @@ class Moderation(commands.Cog):
                 pass
 
     @commands.command()
-    @commands.has_role(permissions_config['mod']['warn_perms'])
+    @commands.has_any_role(*permissions_config['mod']['warn_perms'])
     async def warn(self, ctx, members: commands.Greedy[discord.User], *,
                    reason: str = 'Pas de raisons'):
         """
@@ -348,7 +348,7 @@ class Moderation(commands.Cog):
             await self.send_to_mongo("warn", member.id, 0, date, reason, ctx.author.id)
 
     @commands.command(aliases=['logdelete', 'moddelete', 'mremove', 'modrm'])
-    @commands.has_role(permissions_config['mod']['management_perms'])
+    @commands.has_any_role(*permissions_config['mod']['management_perms'])
     async def modremove(self, ctx, user: discord.User, index: int = -1):
         """
         Commande de log delete.
@@ -359,7 +359,7 @@ class Moderation(commands.Cog):
         await ctx.send("Entrée supprimé de la base de données")
 
     @commands.command(aliases=['loginfo', 'minfo', 'mod', 'info'])
-    @commands.has_role(permissions_config['mod']['management_perms'])
+    @commands.has_any_role(*permissions_config['mod']['management_perms'])
     async def modinfo(self, ctx, user: discord.User):
         """
         Affiche la liste de toutes les sanctiosn prise contre un utilisateur
@@ -380,7 +380,7 @@ class Moderation(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.has_role(permissions_config['bl']['blhsf_perms'])
+    @commands.has_any_role(*permissions_config['bl']['blhsf_perms'])
     async def blhsf(self, ctx, member: discord.Member):
         """
         Blhsf
@@ -393,7 +393,7 @@ class Moderation(commands.Cog):
             pass
 
     @commands.command()
-    @commands.has_role(permissions_config['bl']['blhsf_perms'])
+    @commands.has_any_role(*permissions_config['bl']['blhsf_perms'])
     async def unblhsf(self, ctx, member: discord.Member):
         """
         unBlhsf
@@ -406,7 +406,7 @@ class Moderation(commands.Cog):
             pass
 
     @commands.command()
-    @commands.has_role(permissions_config['bl']['bltds_perms'])
+    @commands.has_any_role(*permissions_config['bl']['bltds_perms'])
     async def bltds(self, ctx, member: discord.Member):
         """
         Bltds
@@ -419,7 +419,7 @@ class Moderation(commands.Cog):
             pass
 
     @commands.command()
-    @commands.has_role(permissions_config['bl']['bltds_perms'])
+    @commands.has_any_role(*permissions_config['bl']['bltds_perms'])
     async def unbltds(self, ctx, member: discord.Member):
         """
         unBltds
@@ -432,7 +432,7 @@ class Moderation(commands.Cog):
             pass
 
     @commands.command()
-    @commands.has_role(permissions_config['bl']['bld_perms'])
+    @commands.has_any_role(*permissions_config['bl']['bld_perms'])
     async def bld(self, ctx, member: discord.Member):
         """
         Bld
@@ -445,7 +445,7 @@ class Moderation(commands.Cog):
             pass
 
     @commands.command()
-    @commands.has_role(permissions_config['bl']['bld_perms'])
+    @commands.has_any_role(*permissions_config['bl']['bld_perms'])
     async def unbld(self, ctx, member: discord.Member):
         """
         unBld

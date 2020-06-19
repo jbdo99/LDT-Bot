@@ -57,7 +57,7 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.MissingRole):
+    if isinstance(error, commands.MissingRole) or isinstance(error, commands.MissingAnyRole):
         await ctx.send("Vous n'avez pas la permission d'exécuter cette commande")
     if isinstance(error, commands.MissingPermissions):
         await ctx.send("Vous n'avez pas la permission d'exécuter cette commande")

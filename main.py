@@ -51,7 +51,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    activity = discord.Activity(name="faite ?help pour les commandes", type=discord.ActivityType.playing)
+    activity = discord.Activity(name="faites ?help pour les commandes", type=discord.ActivityType.playing)
     await bot.change_presence(activity=activity)
     bot.ldt_server = discord.utils.get(bot.guilds, id=permissions_config['server_id'])
 

@@ -49,7 +49,7 @@ class Divers(commands.Cog):
 
 
     @commands.command()
-    @commands.has_role(permissions_config['divers']['gode_perms'])
+    @commands.has_any_role(*permissions_config['divers']['gode_perms'])
     async def gode(self, ctx):
         """
         Ajoute un gode. Disponible une fois par jour
@@ -61,7 +61,7 @@ class Divers(commands.Cog):
             await ctx.send("Vous avez deja reçu votre gode journalier")
 
     @commands.command(aliases=['getgode', 'godeof'])
-    @commands.has_role(permissions_config['divers']['gode_perms'])
+    @commands.has_any_role(*permissions_config['divers']['gode_perms'])
     async def mygode(self, ctx, member: discord.Member = None):
         """
         Affiche vos godes
@@ -80,7 +80,7 @@ class Divers(commands.Cog):
                 await ctx.send(f"{member.name} n'a pas de gode")
 
     @commands.command()
-    @commands.has_role(permissions_config['divers']['gode_perms'])
+    @commands.has_any_role(*permissions_config['divers']['gode_perms'])
     async def topgode(self, ctx):
         """
         Top 5 des membres les plus godé

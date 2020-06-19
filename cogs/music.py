@@ -200,7 +200,7 @@ class Music(commands.Cog):
 
 
     @commands.command(aliases=['sb' , 'sound', 'soundboard', 'soundb'])
-    @commands.has_any_role(*permissions_config['music']['music_perms'])
+    @commands.has_any_role(*permissions_config['music']['soundboard_perms'])
     async def soundbox(self , ctx , * , query: str = None):
         """Soundbox"""
         box = os.listdir('music/soundbox')

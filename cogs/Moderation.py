@@ -126,7 +126,7 @@ class Moderation(commands.Cog):
                 await ctx.guild.ban(discord.Object(id), reason=reason)
                 await self.send_to_mongo("ban", id, -1, datetime.datetime.now(), reason, ctx.author.id)
                 embed = self.embed_constructor()
-                embed.title = "Bannissement"
+                embed.title = "Balayette laser"
                 embed.add_field(name="ID :", value=str(id))
                 embed.add_field(name="Raison :", value=reason[19:])
                 embed.add_field(name="Auteur :", value=ctx.author.name)
@@ -142,11 +142,11 @@ class Moderation(commands.Cog):
             print("la")
             try:
                 await member.send(
-                    f"Vous avez été banni définitevement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante :{reason}")
+                    f"Vous avez été banni définitevement du serveur LDT par {ctx.author.name} le {date.day}/{date.month}/{date.year} pour la raison suivante :{reason} | Si vous pensez que c'est une erreur faite une demande via ce formulaire : https://goo.gl/forms/0r4hOcbEQEinTkVB3")
             except:
                 pass
             embed = self.embed_constructor()
-            embed.title = "Bannissement"
+            embed.title = "Balayette laser"
             embed.add_field(name="Nom :", value=member.name)
             embed.add_field(name="Raison :", value=reason)
             embed.add_field(name="Auteur :", value=ctx.author.name)
@@ -364,20 +364,45 @@ class Moderation(commands.Cog):
         """
         Affiche la liste de toutes les sanctiosn prise contre un utilisateur
         """
+        if not user:
+            await ctx.send("Utilisateur inconnu")
+            return
         modlist = await self.bot.db.get_all_mod_from(user.id)
-        embed = self.embed_constructor()
-        embed.title = f"Historique des sanctions pour {user.name}"
         if len(modlist) > 0:
             textlist = []
             id = 0
             for mod in modlist:
+                modname = discord.utils.get(ctx.message.guild.members, id=mod['author'])
+                if not modname:
+                    modname = f"id:{mod['author']}"
+                else:
+                    modname = modname.name
                 textlist.append(
-                    f"*({id})* **{mod['type'].upper()}** : {humanize.naturaldate(mod['date'])} par {discord.utils.get(ctx.message.guild.members, id=mod['author']).name} pour : `{mod['reason']}`")
+                    f"*({id})* **{mod['type'].upper()}** : {humanize.naturaldate(mod['date'])} par {modname} pour : `{mod['reason']}`")
                 id += 1
-            embed.add_field(name="Liste : ", value="\n".join(textlist))
+            text = "\n".join(textlist)
+            num = len(text)//800
+            if not user:
+                username = "Inconnu"
+            else:
+                username = user.name
+            # pour un plsu long modinfo
+            for i in range(num):
+                embed = self.embed_constructor()
+                embed.title = f"Historique des sanctions pour {username} ({i+1}/{num+1})"
+                embed.add_field(name="Liste : ", value=text[i*800:(i+1)*800])
+                await ctx.send(embed=embed)
+                
+            embed = self.embed_constructor()
+            embed.title = f"Historique des sanctions pour {username} ({num+1}/{num+1})"
+            if num==0:
+                embed.add_field(name="Liste : ", value=text)
+            else:
+                embed.add_field(name="Liste : ", value=text[num*800:])
+            await ctx.send(embed=embed)
         else:
             embed.add_field(name="Liste : ", value="Pas de sanction trouvée pour cet utilisateur")
-        await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
     @commands.command()
     @commands.has_any_role(*permissions_config['bl']['blhsf_perms'])

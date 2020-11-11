@@ -21,12 +21,18 @@ LAVALINK_PASSwORD = config['LAVALINK']['password']
 
 
 description = '''LDT BOT, an awesome bot'''
+
+intents = discord.Intents.all()
+intents.presences = True
+intents.members = True
 bot = commands.AutoShardedBot(command_prefix="?",
                               description=description,
                               help_command=None,
                               case_insensitive=True,
-                              fetch_offline_members=False,
-                              allowed_mentions=discord.AllowedMentions(everyone=False)
+                              fetch_offline_members=True,
+                              allowed_mentions=discord.AllowedMentions(everyone=False),
+                              intents=intents,
+                                chunk_guilds_at_startup=True
                               )
 
 owner = [177375818635280384, 177394669766836224, 685540778474209327]

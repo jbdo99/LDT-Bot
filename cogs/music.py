@@ -240,50 +240,54 @@ class Music(commands.Cog):
     @commands.has_any_role(*permissions_config['music']['music_perms'])
     async def play(self , ctx , * , query: str = None):
         """Search for and add a song to the Queue."""
+        try:
 
-        if not query:
-            await ctx.send('Usage : ?play *nom/lien*')
-            return
+            if not query:
+                await ctx.send('Usage : ?play *nom/lien*')
+                return
 
-        if not RURL.match(query):
-            query = f'ytsearch:{query}'
+            if not RURL.match(query):
+                query = f'ytsearch:{query}'
 
-        tracks = await self.bot.wavelink.get_tracks(f'{query}')
-
-        if not tracks and '&list=' in query:
-            query = query.split('&')[0]
             tracks = await self.bot.wavelink.get_tracks(f'{query}')
 
-        if not tracks:
-            tracks = await self.bot.wavelink.get_tracks(f'{query}')
+            if not tracks and '&list=' in query:
+                query = query.split('&')[0]
+                tracks = await self.bot.wavelink.get_tracks(f'{query}')
+
             if not tracks:
-                return await ctx.send("Musique introuvable")
+                tracks = await self.bot.wavelink.get_tracks(f'{query}')
+                if not tracks:
+                    return await ctx.send("Musique introuvable")
 
-        player = self.bot.wavelink.get_player(ctx.guild.id)
-        if not player.is_connected:
-            await ctx.invoke(self.connect_)
+            player = self.bot.wavelink.get_player(ctx.guild.id)
+            if not player.is_connected:
+                await ctx.invoke(self.connect_)
 
-        if type(tracks) == wavelink.player.TrackPlaylist:
-            for i in tracks.tracks:
-                controller = self.get_controller(ctx)
-                controller.queue.append(i)
-            await ctx.send('Playlist ajouter!')
-            return
+            if type(tracks) == wavelink.player.TrackPlaylist:
+                for i in tracks.tracks:
+                    controller = self.get_controller(ctx)
+                    controller.queue.append(i)
+                await ctx.send('Playlist ajouter!')
+                return
 
-        track = tracks[0]
+            track = tracks[0]
 
-        controller = self.get_controller(ctx)
-        controller.queue.append(track)
+            controller = self.get_controller(ctx)
+            controller.queue.append(track)
 
-        embed = self.embed_constructor()
-        embed.add_field(name='Musique ajouter :' , value=track.title)
-        embed.add_field(name='Autheur : ' , value=track.author)
-        embed.add_field(name='Duree : ' ,
-                        value='{0}m{1}s'.format(int(track.duration) // 60000 , int(track.duration / 1000) % 60))
-        if track.thumb:
-            embed.set_thumbnail(url=track.thumb)
+            embed = self.embed_constructor()
+            embed.add_field(name='Musique ajouter :' , value=track.title)
+            embed.add_field(name='Autheur : ' , value=track.author)
+            embed.add_field(name='Duree : ' ,
+                            value='{0}m{1}s'.format(int(track.duration) // 60000 , int(track.duration / 1000) % 60))
+            if track.thumb:
+                embed.set_thumbnail(url=track.thumb)
 
-        await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
+        except Exception as e:
+            print(e)
+            await ctx.send(str(e))
 
     @commands.command()
     @commands.has_any_role(*permissions_config['music']['music_perms'])

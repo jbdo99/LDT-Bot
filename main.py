@@ -20,7 +20,7 @@ MDB_USER, MDB_PASSWD = config['MDB']['user'], config['MDB']['passwd']
 LAVALINK_PASSwORD = config['LAVALINK']['password']
 
 
-description = '''LDT BOT, an awesome bot'''
+description = '''LDT BOT, an awesome bot for a shitty server'''
 
 intents = discord.Intents.all()
 intents.presences = True
